@@ -1,0 +1,33 @@
+title: Mi Homelab
+description: Centro de control de mi infraestructura
+language: es
+theme: dark
+color: slate
+headerStyle: clean
+cardStyle: hairline
+blockStyle: refined
+statusStyle: dot
+iconStyle: theme
+target: _blank
+useEqualHeights: true
+layout:
+  Servicios del Homelab:
+    style: row
+    columns: 2
+    icon: mdi-view-dashboard
+  Red y conectividad:
+    style: row
+    columns: 1
+    icon: mdi-lan
+  Almacenamiento:
+    style: row
+    columns: 2
+    icon: mdi-harddisk
+  Copias de seguridad:
+    style: row
+    columns: 2
+    icon: mdi-backup-restore
+  Accesos rapidos:
+    style: row
+    columns: 3
+    icon: mdi-link-variant

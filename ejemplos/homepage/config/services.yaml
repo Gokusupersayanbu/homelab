@@ -1,0 +1,174 @@
+# Ejemplo de los servicios descritos; no sustituir sin revisar el services.yaml real.
+- Servicios del Homelab:
+    - Pi-hole:
+        id: pihole
+        icon: pi-hole.png
+        href: http://192.168.0.12/admin/
+        description: DNS y bloqueo de publicidad
+        widget:
+          type: pihole
+          url: http://192.168.0.12
+          version: 6
+          key: "{{HOMEPAGE_VAR_PIHOLE_KEY}}"
+          fields:
+            - queries
+            - blocked
+            - blocked_percent
+    - Uptime Kuma:
+        id: uptime
+        icon: uptime-kuma.png
+        href: http://192.168.0.12:3001
+        description: Monitorizacion y alertas
+        siteMonitor: http://192.168.0.12:3001
+        widget:
+          type: uptimekuma
+          url: http://192.168.0.12:3001
+          slug: homelab
+          fields: [up, down, uptime]
+          highlight:
+            down:
+              numeric:
+                - level: danger
+                  when: gt
+                  value: 0
+                - level: good
+                  when: eq
+                  value: 0
+    - Proxmox:
+        id: proxmox
+        icon: proxmox.png
+        href: https://192.168.0.15:8006
+        description: Virtualizacion y contenedores
+        widget:
+          type: proxmox
+          url: https://192.168.0.15:8006
+          username: "{{HOMEPAGE_VAR_PROXMOX_USER}}"
+          password: "{{HOMEPAGE_VAR_PROXMOX_SECRET}}"
+          fields: [resources.cpu, resources.mem, vms, lxc]
+    - Vaultwarden:
+        id: vaultwarden
+        icon: mdi-shield-lock-outline-#93c5fd
+        href: https://192.168.0.12:8443
+        description: Gestor de contrasenas
+        widget:
+          type: uptimekuma
+          url: http://192.168.0.12:3001
+          slug: vaultwarden
+          fields: [up, down, uptime]
+          highlight:
+            down:
+              numeric:
+                - level: danger
+                  when: gt
+                  value: 0
+                - level: good
+                  when: eq
+                  value: 0
+- Red y conectividad:
+    - Estado de la red:
+        id: red-local
+        icon: mdi-lan
+        href: http://192.168.0.12:3001/status/red
+        description: Router y DNS
+        widget:
+          type: uptimekuma
+          url: http://192.168.0.12:3001
+          slug: red
+          fields: [up, down, uptime]
+          highlight:
+            down:
+              numeric:
+                - level: danger
+                  when: gt
+                  value: 0
+                - level: good
+                  when: eq
+                  value: 0
+- Almacenamiento:
+    - Almacenamiento local:
+        id: almacenamiento-local
+        icon: mdi-harddisk
+        href: https://192.168.0.15:8006
+        description: Almacenamiento local de Proxmox
+        widget:
+          type: customapi
+          url: https://192.168.0.15:8006/api2/json/nodes/homelab/storage?storage=local
+          headers:
+            Authorization: "PVEAPIToken={{HOMEPAGE_VAR_PROXMOX_USER}}={{HOMEPAGE_VAR_PROXMOX_SECRET}}"
+          mappings:
+            - field: data.0.used
+              label: Usado
+              format: bytes
+            - field: data.0.total
+              label: Total
+              format: bytes
+            - field: data.0.used_fraction
+              label: Ocupacion
+              format: percent
+              scale: 100
+    - Almacenamiento local-lvm:
+        id: almacenamiento-lvm
+        icon: mdi-database
+        href: https://192.168.0.15:8006
+        description: Almacenamiento LVM de Proxmox
+        widget:
+          type: customapi
+          url: https://192.168.0.15:8006/api2/json/nodes/homelab/storage?storage=local-lvm
+          headers:
+            Authorization: "PVEAPIToken={{HOMEPAGE_VAR_PROXMOX_USER}}={{HOMEPAGE_VAR_PROXMOX_SECRET}}"
+          mappings:
+            - field: data.0.used
+              label: Usado
+              format: bytes
+            - field: data.0.total
+              label: Total
+              format: bytes
+            - field: data.0.used_fraction
+              label: Ocupacion
+              format: percent
+              scale: 100
+- Copias de seguridad:
+    - Backup local eMMC:
+        id: backup-emmc
+        icon: mdi-harddisk
+        href: https://192.168.0.15:8006
+        description: Backups automaticos CT100 - 04:00
+        widget:
+          type: customapi
+          url: https://192.168.0.15:8006/api2/json/nodes/homelab/storage?storage=backups-emmc
+          headers:
+            Authorization: "PVEAPIToken={{HOMEPAGE_VAR_PROXMOX_USER}}={{HOMEPAGE_VAR_PROXMOX_SECRET}}"
+          mappings:
+            - field: data.0.used
+              label: Usado
+              format: bytes
+            - field: data.0.total
+              label: Total
+              format: bytes
+            - field: data.0.used_fraction
+              label: Ocupacion
+              format: percent
+              scale: 100
+    - Backup externo MEGA:
+        id: backup-mega
+        icon: mdi-cloud-check
+        href: https://mega.nz/fm
+        description: Copias cifradas de CT100
+        widget:
+          type: customapi
+          url: http://backup-status/backup.json
+          refreshInterval: 60000
+          display: list
+          mappings:
+            - field: copias
+              label: Copias
+              format: number
+            - field: espacio_bytes
+              label: Espacio ocupado
+              format: bytes
+            - field: ultimo_backup
+              label: Ultimo backup
+              format: text
+            - field: ultima_subida
+              label: Ultima subida
+              format: text

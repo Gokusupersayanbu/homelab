@@ -1,0 +1,3 @@
+# Archivo real: /root/.config/backup-mega-kuma.curl, permisos 600, NO versionar.
+# Copia la URL privada directamente desde Uptime Kuma; no la publiques.
+url = "http://IP_PRIVADA_CT100:3001/api/push/TOKEN_PRIVADO?status=up&msg=OK&ping="

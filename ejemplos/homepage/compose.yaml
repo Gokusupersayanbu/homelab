@@ -1,0 +1,24 @@
+# Plantilla publicable basada en el compose realmente utilizado en CT100.
+# Credenciales: copiar .env.example a .env y completar EN LOCAL, NUNCA subir .env.
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: "192.168.0.12:3000"
+      HOMEPAGE_VAR_PIHOLE_KEY: "${HOMEPAGE_VAR_PIHOLE_KEY}"
+      HOMEPAGE_VAR_PROXMOX_USER: "${HOMEPAGE_VAR_PROXMOX_USER}"
+      HOMEPAGE_VAR_PROXMOX_SECRET: "${HOMEPAGE_VAR_PROXMOX_SECRET}"
+    volumes:
+      - ./config:/app/config
+
+  backup-status:
+    image: nginx:alpine
+    container_name: homepage-backup-status
+    restart: unless-stopped
+    volumes:
+      - ./backup-status:/usr/share/nginx/html:ro
+    # Sin ports publicados: comunicación solo dentro de red Docker.
