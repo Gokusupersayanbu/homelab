@@ -1,0 +1,13 @@
+
+# homelab-autogen-proteccion-secretos-2026-10-28
+.env
+*.env
+!*.env.example
+__pycache__/
+*.pyc
+*.sql
+*.sql.gz
+*.tar.zst
+*.sqlite
+*.db
+romm-data/

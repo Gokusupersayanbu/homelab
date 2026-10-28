@@ -1,0 +1,5 @@
+# Solo plantilla. Un Push URL contiene un token y NO debe publicarse.
+# /etc/homelab-monitor/backups-url: URL_PRIVADA_GENERADA_POR_KUMA
+# /etc/homelab-monitor/memoria-url: URL_PRIVADA_GENERADA_POR_KUMA
+# /etc/homelab-monitor/lxc-url: URL_PRIVADA_GENERADA_POR_KUMA
+# /etc/homelab-monitor/romm-backup-url: URL_PRIVADA_GENERADA_POR_KUMA

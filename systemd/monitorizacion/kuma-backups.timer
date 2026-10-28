@@ -1,0 +1,11 @@
+[Unit]
+Description=Monitorizar backups cada hora
+
+[Timer]
+OnCalendar=*-*-* *:10:00
+Persistent=true
+AccuracySec=1min
+Unit=kuma-backups.service
+
+[Install]
+WantedBy=timers.target

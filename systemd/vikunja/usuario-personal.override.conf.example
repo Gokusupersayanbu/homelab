@@ -1,0 +1,4 @@
+[Service]
+EnvironmentFile=
+ExecStart=
+ExecStart=/usr/bin/python3 /opt/vikunja-alertas/avisos_multi.py

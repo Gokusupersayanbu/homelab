@@ -1,0 +1,6 @@
+[Unit]
+Description=Comprobar backups de RomM
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/kuma-romm-backup.sh
