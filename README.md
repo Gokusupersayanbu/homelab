@@ -1,50 +1,77 @@
 # Mi Homelab — Proxmox, Docker y copias de seguridad cifradas
 
-![Vista de Homepage](assets/homepage.png)
+![Homepage real: pestaña Local (28/10/2026)](assets/homepage.png)
 
-> **Proyecto documentado el 15/10/2026.** Documentación de un homelab **realmente configurado**, no un tutorial ficticio de instalación. Los ejemplos son versiones publicables y **no contienen credenciales reales**. No ejecutar los scripts del repositorio a ciegas: hay que comprobar rutas, IDs, permisos y nombres de remotos.
+> **Proyecto documentado desde el 15/10/2026 y actualizado el 28/10/2026.** Documentación de un homelab **realmente configurado**, no un tutorial ficticio de instalación. Los ejemplos son versiones publicables y **no contienen credenciales reales**. No ejecutar los scripts del repositorio a ciegas: hay que comprobar rutas, IDs, permisos y nombres de remotos.
 
 ## Visión general
 
-Un equipo compacto con **Proxmox VE** arrancando desde un disco duro **Toshiba USB de 1 TB**, un contenedor **LXC CT100 con Fedora y Docker**, una **eMMC interna de 64 GB** dedicada a las copias de seguridad, y una segunda copia **cifrada en MEGA**. Los servicios se supervisan con Uptime Kuma y se muestran en Homepage.
+Homelab con **Proxmox VE** instalado en un equipo compacto y tres contenedores LXC en funcionamiento. El host utiliza un disco **Toshiba USB de 1 TB** con almacenamiento LVM-thin y una **eMMC interna (58 GiB útiles)** para copias locales. **Homepage** presenta los servicios y sus métricas en las pestañas *Local* y *Tailscale*; **Uptime Kuma** supervisa su disponibilidad y recibe comprobaciones Push.
 
 | Capa | Componente | Función |
 | --- | --- | --- |
-| Virtualización | Proxmox VE | Host, almacenamiento LVM-thin y backup `vzdump` |
-| Contenedor | CT100 (LXC, Fedora) | Docker y servicios |
-| DNS | Pi-hole 6 | Resolución DNS, filtrado de publicidad |
-| Contraseñas | Vaultwarden + Caddy | Gestor de contraseñas y HTTPS |
-| Vigilancia | Uptime Kuma | Disponibilidad, Telegram y monitor Push de backups |
-| Dashboard | Homepage | Servicios, recursos, discos y estado de backups |
-| Backup local | eMMC interna, `backups-emmc` | Backup diario comprimido de CT100 |
-| Backup externo | Rclone + MEGA + Crypt | Cifrado, copia remota y retención |
-| Integración | `vzdump` hook, systemd, JSON y Nginx | Actualiza Homepage y confirma el backup en Kuma |
+| Virtualización | Proxmox VE | Host, LXC, LVM-thin y copias `vzdump` |
+| Servicios principales | CT100 (Fedora + Docker) | Pi-hole 6, Vaultwarden + Caddy, Uptime Kuma, Homepage y Vikunja |
+| Ficheros y música | CT101 (Fedora) | Samba y Navidrome; volumen musical independiente |
+| Videojuegos | CT102 (Debian + Docker) | RomM y MariaDB; biblioteca ROMs en volumen independiente |
+| Panel | Homepage | Vista Local/Tailscale y tarjetas con estadísticas de cada servicio |
+| Monitorización | Uptime Kuma + systemd | Servicios, eMMC, memoria/swap, LXC y backup de RomM; avisos Telegram |
+| Backup local | eMMC `backups-emmc` | CT100 diario, CT101 mediante copias manuales y datos selectivos de RomM |
+| Backup remoto | Rclone Crypt + MEGA | Copia externa cifrada de CT100; **no** de toda la biblioteca de música o ROMs |
 
-### Topología (direcciones privadas de ejemplo usadas en este despliegue)
+### Topología actual (28/10/2026)
 
 ```mermaid
 flowchart TB
-    Internet[Internet / MEGA]
-    Router[Router LAN 192.168.0.1]
-    Host[Proxmox homelab 192.168.0.15]
-    USB[(Disco Toshiba USB 1 TB)]
-    EMMC[(eMMC interna 58.2 GiB)]
-    CT[CT100 Fedora / Docker 192.168.0.12]
-    Apps[Pi-hole / Vaultwarden / Kuma / Homepage]
-    Nginx[Nginx interno: backup.json]
-    Rclone[Rclone Crypt + scripts host]
-    Router --> Host
-    Host --> USB
-    Host --> EMMC
-    Host --> CT
-    CT --> Apps
-    CT --> Nginx
-    EMMC -->|vzdump 04:00| Rclone
-    Rclone -->|archivo cifrado| Internet
-    Rclone -->|pct push resumen JSON| Nginx
-    Rclone -->|Push correcto| Apps
-    Apps -->|customapi interna| Nginx
+    LAN["Router y red local"]
+    TS["Tailscale: acceso restringido"]
+    HOST["Proxmox VE: homelab"]
+    EMMC[("eMMC: backups-emmc")]
+    MEGA["MEGA: CT100 cifrado"]
+
+    LAN --> HOST
+    TS -.-> HOST
+
+    subgraph LXC["Contenedores LXC"]
+        CT100["CT100: Fedora + Docker"]
+        CT101["CT101: Fedora"]
+        CT102["CT102: Debian + Docker"]
+    end
+
+    HOST --> CT100
+    HOST --> CT101
+    HOST --> CT102
+
+    subgraph APPS100["Servicios de CT100"]
+        PI["Pi-hole"]
+        VW["Vaultwarden + Caddy"]
+        KU["Uptime Kuma"]
+        HP["Homepage"]
+        VK["Vikunja"]
+    end
+    CT100 --> PI
+    CT100 --> VW
+    CT100 --> KU
+    CT100 --> HP
+    CT100 --> VK
+
+    CT101 --> SAMBA["Samba"]
+    CT101 --> NAV["Navidrome"]
+    CT101 --> MUSICA[("Volumen /srv/musica")]
+
+    CT102 --> ROMM["RomM"]
+    CT102 --> DB["MariaDB"]
+    CT102 --> JUEGOS[("Volumen /mnt/romm-library")]
+
+    HOST -->|"vzdump CT100 diario 04:00"| EMMC
+    CT101 -.->|"vzdump manual; música excluida"| EMMC
+    CT102 -->|"Backup selectivo RomM 03:10"| EMMC
+    EMMC -->|"rclone Crypt: CT100"| MEGA
+    HOST -.->|"Monitores Push"| KU
+    TS -.->|"Acceso autorizado a Vikunja"| VK
 ```
+
+**Alcance de las copias:** el backup selectivo de RomM protege MariaDB, configuración, assets y recursos, pero **no** los juegos del volumen de biblioteca. El backup de CT101 excluye `/srv/musica`; el envío cifrado a MEGA documentado corresponde a CT100. Las rutas y los servicios se basan en la configuración observada; las métricas del panel son una instantánea.
 
 > **Importante:** el fichero JSON de Homepage muestra estadísticas, **no sustituye a una verificación independiente del backup**. El panel de MEGA no necesita ni debe recibir credenciales de Rclone.
 
