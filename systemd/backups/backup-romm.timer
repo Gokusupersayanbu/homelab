@@ -1,0 +1,11 @@
+[Unit]
+Description=Backup diario RomM a las 03:10
+
+[Timer]
+OnCalendar=*-*-* 03:10:00 Europe/Madrid
+Persistent=true
+AccuracySec=1min
+Unit=backup-romm.service
+
+[Install]
+WantedBy=timers.target

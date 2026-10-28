@@ -1,0 +1,6 @@
+[Unit]
+Description=Monitorizar RAM, Swap y presion de memoria Proxmox
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/kuma-memoria.sh

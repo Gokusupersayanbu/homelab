@@ -1,0 +1,6 @@
+[Unit]
+Description=Monitorizar contenedores LXC Proxmox
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/kuma-lxc.sh

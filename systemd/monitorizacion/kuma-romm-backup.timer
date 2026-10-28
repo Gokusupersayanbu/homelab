@@ -1,0 +1,11 @@
+[Unit]
+Description=Verificar backups RomM cada 15 minutos
+
+[Timer]
+OnCalendar=*-*-* *:0/15:00
+Persistent=true
+AccuracySec=1min
+Unit=kuma-romm-backup.service
+
+[Install]
+WantedBy=timers.target

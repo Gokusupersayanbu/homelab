@@ -1,0 +1,6 @@
+[Unit]
+Description=Comprobar disco de backups Proxmox
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/kuma-backups.sh

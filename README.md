@@ -121,3 +121,16 @@ docker compose ps
 - [Homepage: configuración](https://gethomepage.dev/configs/settings/)
 
 **Licencia:** sin licencia asignada por ahora. Añade una licencia apropiada si deseas permitir la reutilización explícita de los archivos.
+
+<!-- actualizacion-homelab-2026-10-28 -->
+## ActualizaciÃ³n de octubre de 2026
+
+Se han documentado las mejoras del homelab en cinco capÃ­tulos adicionales:
+
+- [14. Vikunja: usuarios y alertas de Telegram](docs/14-vikunja-telegram.md)
+- [15. MonitorizaciÃ³n con Uptime Kuma y systemd](docs/15-monitorizacion-avanzada.md)
+- [16. Backups selectivos de RomM](docs/16-backups-romm.md)
+- [17. Seguridad y aislamiento con Tailscale](docs/17-seguridad-tailscale.md)
+- [18. Inventario, backups y pendientes](docs/18-estado-y-pendientes.md)
+
+[Resumen y archivos de la actualizaciÃ³n](README-ACTUALIZACION.md) Â· [Cambios del 28/10/2026](docs/actualizacion-2026-10-28.md)

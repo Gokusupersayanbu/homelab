@@ -1,0 +1,10 @@
+[Unit]
+Description=Backup de datos importantes RomM
+RequiresMountsFor=/mnt/backups
+After=pve-guests.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flock -n /run/backup-romm.lock /usr/local/sbin/backup-romm.sh
+ExecStartPost=/usr/local/sbin/rotar-romm.sh
+TimeoutStartSec=1h
