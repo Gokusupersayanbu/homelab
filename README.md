@@ -150,7 +150,7 @@ docker compose ps
 **Licencia:** sin licencia asignada por ahora. Añade una licencia apropiada si deseas permitir la reutilización explícita de los archivos.
 
 <!-- actualizacion-homelab-2026-10-28 -->
-## ActualizaciÃ³n de octubre de 2026
+## Actualizacion de octubre de 2026
 
 Se han documentado las mejoras del homelab en cinco capÃ­tulos adicionales:
 
